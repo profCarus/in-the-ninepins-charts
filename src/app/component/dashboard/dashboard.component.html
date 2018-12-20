@@ -1,0 +1,9 @@
+<app-header></app-header>
+<div class="grid grid-pad">
+  <a *ngFor="let user of members | async"  [routerLink]="['/detail', user.id]"  class="col-1-4">
+    <div class="module member">
+      <h3>{{ user.name }}</h3>
+      <h4 *ngIf="openPains" >{{ openPains[user.id - 1] | number : '1.2-2' }} €</h4>      
+    </div>
+  </a>
+</div>

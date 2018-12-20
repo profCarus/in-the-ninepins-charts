@@ -1,0 +1,23 @@
+<app-header></app-header>
+<h1 style="text-align: center;">Kegeln Monat {{ month }} {{ year }}</h1>
+
+<div id="tblFinancialStatement">
+
+  <!-- <h2>{{ marcus | async }}</h2> -->
+  <table>
+
+    <thead>
+      <th align="left">ID:</th>
+      <th align="left">Name:</th>
+      <th align="right">Strafen:</th>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of financialStatement | async">
+        <td>{{ user['key'] }}</td>
+        <td>{{ getUserName(user['key']) }}</td>
+        <td align="right">{{ user['payload'].val() | number : '1.2-2' }} €</td>
+      </tr>
+      <tr><td></td><td align="right">Schnitt:</td><td align="right">{{ average | async | number : '1.2-2' }} €</td></tr>
+    </tbody>
+  </table>
+</div>

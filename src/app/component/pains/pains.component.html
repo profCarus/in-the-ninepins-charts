@@ -1,0 +1,24 @@
+<app-header></app-header>
+<h1 style="text-align: center;">Aktueller Strafenkatalog</h1>
+
+<div id="tblFinancialStatement">
+  <table>
+
+    <thead>
+      <th align="left">Id:</th>
+      <th align="left">Name:</th>
+      <th align="left">Betrag:</th>
+      <th align="left">Besonderheit:</th>
+      <th align="left">Aktiv:</th>      
+    </thead>
+    <tbody>
+      <tr *ngFor="let pain of pains | async">
+        <td>{{ pain.key }}</td>
+        <td>{{ pain.payload.val().name }}</td>
+        <td align="center">{{ pain.payload.val().amount | number : '1.2-2'}} €</td>
+        <td>{{ pain.payload.val().specialty }}</td>
+        <td align="center"><input type="checkbox" [(ngModel)]="pain.payload.val().active" disabled></td>
+      </tr>
+    </tbody>
+  </table>
+</div>

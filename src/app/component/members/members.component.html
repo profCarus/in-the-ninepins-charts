@@ -1,0 +1,13 @@
+<app-header></app-header>
+<h2>Hegels</h2>
+<ul class="members">
+  <li *ngFor="let user of users | async" [class.selected]="user === selectedUser" (click)="onSelect(user)">
+    <span class="badge">{{ user.id }}</span> {{ user.name }}
+  </li>
+</ul>
+<div *ngIf="selectedUser">
+  <h2>
+    {{selectedUser.name | uppercase}} is my user
+  </h2>
+  <button (click)="gotoDetail()">View Details</button>
+</div>

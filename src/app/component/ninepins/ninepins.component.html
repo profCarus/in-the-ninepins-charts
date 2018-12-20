@@ -1,0 +1,103 @@
+<app-header></app-header>
+<h1 style="text-align: center;">Kegeln Monat {{ month }} {{ year }}</h1>
+<button class="btnFinishNinepins" (click)="finishNinepins();">Abschließen</button>
+
+<br>
+<h5>Aktiv: {{ countActiveUsers }}</h5>
+<h5>Strafen Gesamt: {{ totalPainToday | number : '1.2-2' }} €</h5>
+<h5>Schnitt: {{ averagePain | number : '1.2-2' }} €</h5>
+
+<div>
+
+  <div id="memberSelection">
+    <ul class="members">
+      <li *ngFor="let user of users | async" [class.selected]="user === selectedUser" (click)="onSelect(user)">
+        <span class="badge">{{ user.id }}</span>
+        <input id="cbEnableUser_{{ user.id }}" type="checkbox" class="checkboxEnabledUser" [(ngModel)]="user.active"
+          disabled>
+        {{ user.name }}
+      </li>
+    </ul>
+  </div>
+
+  <div id="painArea">
+    <div *ngIf="selectedUser" class="userDetails">
+
+      <div class="painUserSummary">
+        <form>
+          <h2>{{selectedUser.name}}</h2>
+          <!-- <tr>
+            <td class="painUserSummaryCol1">Offene Strafen Vormonat:</td>
+            <td class="painUserSummaryCol2">{{selectedUser.totalPain | number : '1.2-2'}} €</td>
+          </tr> -->
+
+          <tr *ngIf="selectedUser.active">
+            <td class="painUserSummaryCol1">Aktuelle Strafen:</td>
+            <td class="painUserSummaryCol2">{{selectedUser.painToday | number : '1.2-2'}} €</td>
+          </tr>
+          <tr *ngIf="!selectedUser.active">
+            <td class="painUserSummaryCol1">Schnitt ({{ countActiveUsers }} aktiv):</td>
+            <td class="painUserSummaryCol2">{{averagePain | number : '1.2-2'}} €</td>
+          </tr>
+
+          <!-- <tr>
+            <td class="painUserSummaryCol1">Bahnpauschale:</td>
+            <td class="painUserSummaryCol2">{{ allInclusive | number : '1.2-2'}} €</td>
+          </tr> -->
+
+          <!-- <tr *ngIf="selectedUser.active">
+            <td class="painUserSummaryCol1">Strafen Gesamt:</td>
+            <td class="painUserSummaryCol2">{{selectedUser.totalPain + selectedUser.painToday + allInclusive | number : '1.2-2'}} €</td>
+          </tr>
+          <tr *ngIf="!selectedUser.active">
+            <td class="painUserSummaryCol1">Strafen Gesamt:</td>
+            <td class="painUserSummaryCol2">{{selectedUser.totalPain + averagePain + allInclusive| number : '1.2-2'}} €</td>
+          </tr> -->
+        </form>
+      </div>
+
+      <div *ngIf="selectedUser.active">
+
+        <div class="painActionArea painActionAreaLeft">
+          <div *ngFor="let painType of painsTypes | async; let i = index">
+            <button class="painBtn" *ngIf="i % 2 == 0" (click)="addPain(selectedUser, painType);">{{painType.name}}
+              {{painType.amount | number : '1.2-2' }} €</button>
+            <!-- <button class="painBtn" *ngIf="i % 2 == 1" (click)="addPain(selectedUser, painType);">{{painType.name}} {{painType.amount | number : '1.2-2' }} €</button> -->
+          </div>
+        </div>
+        <div class="painActionArea painActionAreaRight">
+          <div *ngFor="let painType of painsTypes | async; let i = index">
+            <!-- <button class="painBtn" *ngIf="i % 2 == 0" (click)="addPain(selectedUser, painType);">{{painType.name}} {{painType.amount | number : '1.2-2' }} €</button> -->
+            <button class="painBtn" *ngIf="i % 2 == 1" (click)="addPain(selectedUser, painType);">{{painType.name}}
+              {{painType.amount | number : '1.2-2' }} €</button>
+          </div>
+        </div>
+
+        <div class="manualPain">
+          <label style="margin-left: .2em; font-size: 1em;">Manuelle Strafe:</label>
+          <input style="width: 3em; height: 1.8em; margin: 0 2em; font-size: 1em;" [(ngModel)]="manualPain" type="number">
+          <button style="width: 8em; font-size: 1em; text-align: center;" (click)="addManualPain();">Verbuchen [€]</button>
+        </div>
+
+        <div class="painChronology">
+          <h2>
+            <u>Chronologie der Strafen:</u>
+          </h2>
+          <!-- <button class="btnAllDeletePainsForUser" (click)="deleteAllPainsForUser(selectedUser);">Alle löschen</button> -->
+          <ul class="listOfPains" *ngFor="let pain of userPains | async">
+            <tr>
+              <td>{{ pain.payload.key | date:'dd.MM.yyyy HH:mm:ss' }}</td>
+              <td>{{ pain.payload.val() | number : '1.2-2' }} €</td>
+              <td>
+                <button class="cancelPainBtn" (click)="cancelPain(selectedUser, pain.payload.key, pain.payload.val());">x</button>
+              </td>
+            </tr>
+          </ul>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+</div>

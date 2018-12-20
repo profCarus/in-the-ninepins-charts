@@ -1,0 +1,63 @@
+<app-header></app-header>
+<div *ngIf="user" class="userDetails">
+  <h2>Detailinformationen zu {{ (user | async)?.name }}:</h2>
+  <div>
+    <label>ID: </label>{{ (user | async)?.id }}
+  </div>
+  <div>
+    <label>Name: </label>{{ (user | async)?.name }}
+  </div>
+  <div>
+    <label>Aktives Mitglied: </label>{{ (user | async)?.activeMember }}
+  </div>
+  <div>
+    <label>Geburtsdatum: </label>{{ (user | async)?.birthdate }}
+  </div>
+  <div>
+    <label>Offene Strafen: </label>{{ soll | number : '1.2-2' }} €
+  </div>
+  <div>
+    <label>Heute aktiv: </label>
+    <input type="checkbox" class="cbStateActive" [(ngModel)]="user['active']" (click)="setActiveState();" style="width: 3.2em; margin-right: .3em;">
+    <button (click)="setActiveState();">Aktiv / Inaktiv</button>
+  </div>
+  <div style="margin-top: .5em;">
+    <label>Einzahlung: </label>
+    <input id="inputPayment" [(ngModel)]="payment" type="number">
+    <input id="inputVwz" [(ngModel)]="vwz" type="string">    
+    <button (click)="executePayment();">Verbuchen [€]</button>
+  </div>
+  <div style="margin-top: .5em;">
+    <label>Neues Soll: </label>
+    <input id="inputPayment" [(ngModel)]="neuesSoll" type="number">
+    <select matNativeControl required [(ngModel)]="vwzManuellesSoll">
+      <option value="Schnaps">Schnaps</option>
+      <option value="Verspätung">Verspätung</option>
+      <option value="Kicktipp">Kicktipp</option>
+      <option value="Hegelevent">Hegelevent</option>
+      <option value="Silvester">Silvester</option>
+      <option value="Sonstiges">Sonstiges</option>
+    </select>
+    <button (click)="executeNeuesSoll();">Verbuchen [€]</button>
+  </div>
+
+  <div class="cashRegister" style="width:80%">
+    <h2>
+      <u>Strafen-Konto:</u>
+    </h2>
+    <!-- <button class="btnAllDeletePainsForUser" (click)="deleteAllPainsForUser(selectedUser);">Alle löschen</button> -->
+    <table id="StrafenUebersicht" style="width:100%">
+      <thead>
+        <th></th>
+        <th align="right"></th>
+      </thead>
+      <tbody>
+          <tr class="listOfPayments" *ngFor="let payment of cashRegisterOrdered ">
+            <td>{{ payment.key }}</td>
+            <td>{{ payment.soll | number : '1.2-2' }} €</td>
+          </tr>
+      </tbody>  
+    </table>
+  </div>
+  <button (click)="goBack()" style="margin-top: 4em;">Back</button>
+</div>

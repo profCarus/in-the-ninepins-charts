@@ -1,0 +1,49 @@
+<app-header></app-header>
+<h1 style="text-align: center;">Kegeln {{ yearStart }} - {{ year }}</h1>
+
+<div id="tblStatisticPainsLastYear">
+
+  <table>
+    <thead>
+      <th></th>
+      <th align="center" *ngFor="let m of arrMonth">{{m}}</th>
+      <th>Summe</th>
+      <th>Ø Summe</th>      
+      <th>Gossen</th>     
+      <th>Ø Gossen</th>     
+    </thead>
+    <tbody>
+      <td>
+          <tr *ngFor="let user of mapNinepins[0] | async">
+            <td>{{ getUserName(user.key) }}</td>
+        </tr>
+      </td>
+      <td align="center" *ngFor="let o of mapNinepins" >
+        <tr align="center" *ngFor="let user of o | async">
+          <td align="center">{{ user.payload.val() | number : '1.2-2' }} €</td>
+        </tr>
+      </td>
+      <td align="center">
+          <tr *ngFor="let pains of arrPainsSum">
+              <td>{{ pains | number : '1.2-2' }} €</td>
+          </tr>
+      </td>
+      <td align="center">
+          <tr *ngFor="let pains of arrPainsSum">
+              <td>{{ pains / mapNinepins.length | number : '1.2-2'}} €</td>
+          </tr>
+      </td>
+      <td align="center">
+          <tr *ngFor="let gossen of arrGossen">
+              <td>{{ gossen | number }}</td>
+          </tr>
+      </td>
+      <td align="center">
+          <tr *ngFor="let gossen of arrGossen">
+              <td>{{ gossen / mapNinepins.length | number }}</td>
+          </tr>
+      </td>
+    </tbody>
+  </table>
+
+</div>

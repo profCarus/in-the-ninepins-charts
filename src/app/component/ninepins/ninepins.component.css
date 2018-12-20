@@ -1,0 +1,134 @@
+.btnFinishNinepins {
+    float: left;
+    margin-left: 90%;
+    margin-top: -1.9em;
+    height: 3em;
+}
+
+#memberSelection {
+    float:left;
+    width: 20%;
+}
+
+#painArea, #painActionArea {
+    width: 80%;
+    float:left;
+}
+
+#painArea {
+    position: relative;
+    margin-top: -9.6em;
+}
+
+.userDetails {
+    margin-left: 5em;
+}
+
+.painUserSummary {
+    margin: 0, 4em, 3em 4em;
+    padding-bottom: 1em;
+}
+
+.painUserSummaryCol1 {
+    width: 40%;
+    padding: .5em 0em;
+}
+
+.painUserSummaryCol2{
+    width: 60%;
+    padding: .5em 2em;
+}
+
+.painActionArea {
+    margin-top: 2.3em;
+    margin-bottom: 3em;
+    /* margin: 0 auto; */
+    width: 48%;
+    /* height: 6em; */
+}
+
+.painActionAreaLeft{
+    float: left;
+}
+
+.painActionAreaRight{
+    float: left;
+}
+
+.painBtn {
+    width: 21em !important;
+    height: 3em !important;
+    font-size: 15px !important;
+    margin-top: .5em !important;
+    /* margin-left: 11.5em !important;
+    margin-left: 3.5em !important; */
+    text-align: left !important;
+    background-color: #b5daff;
+    color: black;
+}
+
+div .painBtnLeft {
+    float: left;
+}
+
+div .painBtnRight {
+    float: right;
+}
+
+.painActionArea button {
+    /* margin: 2em 1em; */
+    margin: .2em;
+    width: 20%;
+    text-align: center;
+    font-size: 20px;
+}
+
+.pain10 {
+    background-color: #5cb85c;
+    color: white;
+}
+.pain20 {
+    background-color: #5bc0de;
+    color: white;
+}
+.pain50 {
+    background-color: #d9534f;
+    color: white;
+}
+.pain100 {
+    background-color: #EED971;
+    color: white;
+    /* width: 104.96px; */
+}
+
+.painChronology {
+    margin-top: 4em;
+}
+
+.cancelPainBtn {
+    width: 2.5em;
+    height: 2.5em;
+    font-size: 16px;
+    color: red;
+    font-weight: bold;
+}
+
+.listOfPains {
+    margin: .25em 0 auto;
+}
+
+.listOfPains tr td {
+    /* padding: .5em 1em; */
+    padding: 0em 4em;
+    margin: 0 auto;
+}
+
+md-checkbox.dotted .md-icon {
+    border-width: 1px;
+    border-style: dashed;
+}
+
+.btnAllDeletePainsForUser {
+    float: right;
+    margin: -4em 4em;
+}
