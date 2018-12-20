@@ -1,4 +1,4 @@
 node_modules/
 dist/
 src/environments/
-login.component.ts
+src/app/component/login/login.component.ts
