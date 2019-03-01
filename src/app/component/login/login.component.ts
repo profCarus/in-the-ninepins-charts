@@ -27,7 +27,7 @@ export class LoginComponent implements OnInit {
     
     // console.log(username, password);
 
-  	if(username == 'username' && password == 'password') {
+  	if(username == 'kchegels2012@gmail.com' && password == 'hegelhegelhegel') {
       this.authUserService.setUserLoggedIn();
       this.router.navigate(['dashboard']);
   	}

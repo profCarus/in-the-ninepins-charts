@@ -15,7 +15,7 @@ export class NinepinsComponent {
   userPains: Observable<any[]>;
   allPains: Observable<any[]>;
   painsTypes: Observable<any[]>;
-  
+
   countActiveUsers: number;
   selectedUser: any;
   month: string;
@@ -37,84 +37,53 @@ export class NinepinsComponent {
     this.year = this.painManager.year.toString();
 
     this.users = fireDatabase.list('/users').valueChanges();
+
     this.users.subscribe(users => {
-      this.countActiveUsers = users.filter(user => user.active == true).length;    
+      this.countActiveUsers = users.filter(user => user.active == true).length;
+      users.forEach(user => this._getTotalPainForUser(user));
     });
 
     let allPainsUrl = '/ninepins/' + this.painManager.getYear() + '_' + (this.painManager.getMonth() + 1) + '/pains/';
     this.allPains = this.fireDatabase.list(allPainsUrl).snapshotChanges();
     this.painsTypes = this.fireDatabase.list('/pains').valueChanges();
-    this.setTotalPainForUsers();
-    this.calculateAveragePain();
+    this._calculateAveragePain();
   }
-
-  private setUserSoll(user: any){    
-    let url = '/users/' + user.id + '/painCashRegister';
-
-    this.fireDatabase.list(url).valueChanges().forEach(cr => {
-      var sum = 0;
-      cr.forEach(b => {
-        sum += +b;
-      });
-      user.totalPain = sum;
-    })
-  }
-
-  private setTotalPainForUsers() {
-    this.users.subscribe(users => {
-      users.forEach(user => {
-        this.getTotalPainForUser(user);
-      });
-    });
-  }
-
-  getTotalPainForUser(user: any) {
-    this.userPains = this.fireDatabase.list('/ninepins/' + this.painManager.getYear() + '_' +
-      (this.painManager.getMonth() + 1) + '/pains/' + user.id).snapshotChanges();
-    this.userPains.subscribe(pains => {
-      var painSum = 0;
-      pains.forEach(pain => {
-        painSum = painSum + +pain.payload.val();
-      })
-      user.painToday = painSum;
-    });
-  }
-
 
   onSelect(user: any): void {
     this.selectedUser = user;
     this.manualPain = 0;
-    this.setUserSoll(user);
-    this.getTotalPainForUser(user);
-    this.calculateAveragePain();
+    // this._setUserSoll(user);
+    this._getTotalPainForUser(user);
+    this._calculateAveragePain();
   }
 
   addPain(user: any, pain: any) {
-    if(pain['specialty'] != undefined
-      && pain['specialty'].includes("für alle")){
-        this.users.forEach(users => {
-          users.forEach(u => {
-            if(u.id != user.id && u.active){
-              this.painManager.addPainFor(u.id, pain.amount);
-            }
-          });
+    if (pain['specialty'] != undefined
+      && pain['specialty'].includes("für alle")) {
+      this.users.forEach(users => {
+        users.forEach(u => {
+          if (u.id != user.id && u.active) {
+            this.painManager.addPainFor(u.id, pain.amount);
+          }
         });
-      }
-    
+      });
+    }
+
     else {
       this.painManager.addPainFor(user.id, pain.amount);
     }
-    this.calculateAveragePain();
+    this._calculateAveragePain();
   }
 
-  addManualPain(){
+  addManualPain() {
     this.painManager.addPainFor(this.selectedUser.id, this.manualPain);
+    this._calculateAveragePain();
   }
 
   cancelPain(user: any, painKey: Date) {
     this.fireDatabase.object('/ninepins/' + this.painManager.getYear() + '_' +
       (this.painManager.getMonth() + 1) + '/pains/' + user.id + '/' + painKey).remove();
-      this.calculateAveragePain();
+    this._calculateAveragePain();
   }
 
   finishNinepins() {
@@ -130,18 +99,18 @@ export class NinepinsComponent {
         // console.log(user);
         // this.painManager.finishUser(user.id, 2);
 
-        if (!user.activeMember) {          
+        if (!user.activeMember) {
           this.painManager.finishUser(user.id, 5);
           // this.cashRegisterService.addPains(user.id, 5);
         }
-  
+
         else if (user.active == false) {
           let pain = this.allInclusive + this.averagePain;
-          pain = Math.ceil( (pain * 2 ) ) / 2;
+          pain = Math.ceil((pain * 2)) / 2;
           this.painManager.finishUser(user.id, pain);
           this.cashRegisterService.addPains(user.id, pain);
         }
-  
+
         else {
           let url = '/ninepins/' + this.painManager.getYear() + '_' + (this.painManager.getMonth() + 1) + '/pains/' + user.id;
           this.fireDatabase.list(url).snapshotChanges().subscribe(pains => {
@@ -151,7 +120,7 @@ export class NinepinsComponent {
             });
 
             var pain = Math.round((this.allInclusive + painSum) * 10) / 10;
-            pain = Math.ceil( (pain * 2 ) ) / 2;    
+            pain = Math.ceil((pain * 2)) / 2;
             this.painManager.finishUser(user.id, pain);
             this.cashRegisterService.addPains(user.id, pain);
           });
@@ -161,27 +130,40 @@ export class NinepinsComponent {
     alert("Auswertung berechnet!!!");
   }
 
-  deleteAllPainsForUser(user: any) {
-    let url = '/ninepins/' + this.painManager.getYear() + '_' + (this.painManager.getMonth() + 1) + '/pains/' + user.id + '/';
-    this.fireDatabase.list(url).remove();
-    user.painToday = 0;
+  private _getTotalPainForUser(user: any) {
+    this.userPains = this.fireDatabase.list('/ninepins/' + this.painManager.getYear() + '_' +
+      (this.painManager.getMonth() + 1) + '/pains/' + user.id).snapshotChanges();
+    this.userPains.subscribe(pains => {
+      var painSum = 0;
+      pains.forEach(pain => {
+        painSum = painSum + +pain.payload.val();
+      })
+      user.painToday = painSum;
+    });
   }
 
-  private calculateAveragePain() {
-    var painTodaySum = 0;
-    var average = 0;
+  private _calculateAveragePain() {
+    this.totalPainToday = 0;
+    this.averagePain = 0;
+    this._sumOfAllPains().then(painTodaySum => {
+      this.totalPainToday = painTodaySum;
+      this.averagePain = Math.round(painTodaySum / this.countActiveUsers * 10) / 10;
+    });
+  }
 
-    this.allPains.subscribe(
-      userPains => userPains.forEach( user => {
-        let urlPainsOfUser = '/ninepins/' + this.painManager.getYear() + '_' + (this.painManager.getMonth() + 1) + '/pains/' + user.key;
-        this.fireDatabase.list(urlPainsOfUser).valueChanges().forEach(pains => pains.forEach(pain => {         
-          painTodaySum += +pain;
-          average = Math.round(painTodaySum / this.countActiveUsers * 10) / 10;
-          // console.log("TotalPainToday:", this.totalPainToday, "CountActiveUsers:", this.countActiveUsers, "Average:", this.averagePain);
-          // console.log("TotalPainToday:", this.totalPainToday, "CountActiveUsers:", this.countActiveUsers, "Average:", average);
-          this.totalPainToday = painTodaySum;
-          this.averagePain = average;          
-        }));
-      }));
+  private _sumOfAllPains(): Promise<number> {
+    var painTodaySum = 0;
+    return new Promise<number>((resolve) => {
+      for (let i = 1; i <= 12; i++) {
+        let urlPainsOfUser = '/ninepins/' + this.painManager.getYear() + '_' + (this.painManager.getMonth() + 1) + '/pains/' + i;
+        this.fireDatabase.list(urlPainsOfUser).valueChanges().forEach(pains => {
+          pains.forEach(pain => {
+            painTodaySum += +pain;
+          });
+          if (i === 12)
+            resolve(painTodaySum);
+        });
+      }
+    });
   }
 }
