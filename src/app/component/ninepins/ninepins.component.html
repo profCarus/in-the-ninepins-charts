@@ -10,11 +10,10 @@
 <div>
 
   <div id="memberSelection">
-    <ul class="members">
-      <li *ngFor="let user of users | async" [class.selected]="user === selectedUser" (click)="onSelect(user)">
+    <ul *ngFor="let user of users | async"  class="members">
+      <li *ngIf="user.active" [class.selected]="user === selectedUser" (click)="onSelect(user)">
         <span class="badge">{{ user.id }}</span>
-        <input id="cbEnableUser_{{ user.id }}" type="checkbox" class="checkboxEnabledUser" [(ngModel)]="user.active"
-          disabled>
+        <!-- <input id="cbEnableUser_{{ user.id }}" type="checkbox" class="checkboxEnabledUser" [(ngModel)]="user.active" disabled> -->
         {{ user.name }}
       </li>
     </ul>

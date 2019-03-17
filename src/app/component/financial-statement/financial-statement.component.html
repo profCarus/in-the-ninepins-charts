@@ -17,7 +17,7 @@
         <td>{{ getUserName(user['key']) }}</td>
         <td align="right">{{ user['payload'].val() | number : '1.2-2' }} €</td>
       </tr>
-      <tr><td></td><td align="right">Schnitt:</td><td align="right">{{ average | async | number : '1.2-2' }} €</td></tr>
+      <tr><td></td><td align="right">Schnitt, inkl. Bahnpauschale:</td><td align="right">{{ average | async | number : '1.2-2' }} €</td></tr>
     </tbody>
   </table>
 </div>

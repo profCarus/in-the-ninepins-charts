@@ -94,14 +94,18 @@ export class NinepinsComponent {
       users.forEach(user => {
 
         // Store Average
-        this.fireDatabase.object('/ninepins/' + this.year + '_' + (this.painManager.getMonth() + 1) + '/average/').set(this.averagePain);
+        this.fireDatabase.object('/ninepins/' + this.year + '_' + (this.painManager.getMonth() + 1) + '/average/')
+          .set(this.allInclusive + this.averagePain);
 
-        // console.log(user);
-        // this.painManager.finishUser(user.id, 2);
+        if (!user.activeMember && user.active) {
+          this._getAllPainsOfUserForFinishUser(user).then(pain => {
+            this.painManager.finishUser(user.id, pain - 5);
+            this.cashRegisterService.addPains(user.id, pain - 5);
+          });
+        }
 
-        if (!user.activeMember) {
+        else if (!user.activeMember) {
           this.painManager.finishUser(user.id, 5);
-          // this.cashRegisterService.addPains(user.id, 5);
         }
 
         else if (user.active == false) {
@@ -112,22 +116,31 @@ export class NinepinsComponent {
         }
 
         else {
-          let url = '/ninepins/' + this.painManager.getYear() + '_' + (this.painManager.getMonth() + 1) + '/pains/' + user.id;
-          this.fireDatabase.list(url).snapshotChanges().subscribe(pains => {
-            var painSum = 0;
-            pains.forEach(pain => {
-              painSum = painSum + +pain.payload.val();
-            });
-
-            var pain = Math.round((this.allInclusive + painSum) * 10) / 10;
-            pain = Math.ceil((pain * 2)) / 2;
+          this._getAllPainsOfUserForFinishUser(user).then(pain => {
             this.painManager.finishUser(user.id, pain);
             this.cashRegisterService.addPains(user.id, pain);
           });
         }
+
       })
     });
     alert("Auswertung berechnet!!!");
+  }
+
+  private _getAllPainsOfUserForFinishUser(user) {
+    return new Promise<number>((resolve) => {
+      let url = '/ninepins/' + this.painManager.getYear() + '_' + (this.painManager.getMonth() + 1) + '/pains/' + user.id;
+      this.fireDatabase.list(url).snapshotChanges().subscribe(pains => {
+        var painSum = 0;
+        pains.forEach(pain => {
+          painSum = painSum + +pain.payload.val();
+        });
+
+        var pain = Math.round((this.allInclusive + painSum) * 10) / 10;
+        pain = Math.ceil((pain * 2)) / 2;
+        resolve(pain);
+      });
+    });
   }
 
   private _getTotalPainForUser(user: any) {
